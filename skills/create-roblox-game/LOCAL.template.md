@@ -28,8 +28,7 @@ Never write a key or token here; record only the NAME of the environment variabl
 
 - Open Cloud key, for upload and publish (environment variable name, normally
   `ROBLOX_API_KEY`):
-- Kaggle, only for the GPU mesh step (environment variable names, normally
-  `KAGGLE_USERNAME` and `KAGGLE_KEY`, or a `~/.kaggle` credentials file):
+- Kaggle: NOT USED (2026-10-19). Its terms ban this use; see roblox-3d-model.
 - Default place id for `place_state.py` (environment variable `ROBLOX_PLACE_ID`,
   optional; each game also records its own ids in `design/game.json` under `publish`):
 

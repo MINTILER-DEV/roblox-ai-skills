@@ -1,9 +1,24 @@
 ---
 name: roblox-3d-model
-description: Generate game-ready 3D models for Roblox from text prompts, headlessly and end to end, one asset or a whole batch - text to a VERIFIED 2D concept image, image to a high-poly mesh with Hi3DGen (on Kaggle for volume, or a HuggingFace Space for one-offs), then headless Blender weld + decimate + UV + normal bake to a Roblox-legal MeshPart. GEOMETRY AND COLOUR BOTH WORK as of 2026-08-26 - colour is PAINTED procedurally into the UV atlas from a small JSON spec of stamps (paint_texture.py), which is exact and has no camera to align; the older concept-projection route still exists but smears and is only for assets that need the concept's actual markings. Assets go into Studio either with NO UPLOAD via AssetService EditableMesh/EditableImage (session-local, no credentials) or PERMANENTLY via a free Open Cloud upload as Model + Image (never Decal). batch.py chains the whole set: concepts, sheet, meshes, orient, paint, publish, studio - proven end to end. Use this whenever the user wants a Roblox mesh, prop, weapon, animal, crate, vehicle or any MeshPart generated rather than modelled by hand, wants a set of models made, wants an image turned into a Roblox model, asks about mesh triangle budgets, decimation, UV unwrapping or normal baking, or hits an asset upload that fails looking like a permissions error. Also trigger when a generated mesh is too heavy for Roblox, has no UVs, looks smooth and detail-less after being reduced, or when GPU quota is the thing blocking a batch of 3D generations.
+description: Generate game-ready 3D models for Roblox from text prompts, headlessly and end to end, one asset or a whole batch - text to a VERIFIED 2D concept image, image to a high-poly mesh with Hi3DGen (a HuggingFace Space, one at a time; Kaggle is OFF, see the notice at the top), then headless Blender weld + decimate + UV + normal bake to a Roblox-legal MeshPart. GEOMETRY AND COLOUR BOTH WORK as of 2026-08-26 - colour is PAINTED procedurally into the UV atlas from a small JSON spec of stamps (paint_texture.py), which is exact and has no camera to align; the older concept-projection route still exists but smears and is only for assets that need the concept's actual markings. Assets go into Studio either with NO UPLOAD via AssetService EditableMesh/EditableImage (session-local, no credentials) or PERMANENTLY via a free Open Cloud upload as Model + Image (never Decal). batch.py chains the whole set: concepts, sheet, meshes, orient, paint, publish, studio - proven end to end. Use this whenever the user wants a Roblox mesh, prop, weapon, animal, crate, vehicle or any MeshPart generated rather than modelled by hand, wants a set of models made, wants an image turned into a Roblox model, asks about mesh triangle budgets, decimation, UV unwrapping or normal baking, or hits an asset upload that fails looking like a permissions error. Also trigger when a generated mesh is too heavy for Roblox, has no UVs, looks smooth and detail-less after being reduced, or when GPU quota is the thing blocking a batch of 3D generations.
 ---
 
 # Roblox 3D models, headless
+
+> **KAGGLE IS OFF. Do not use it (2026-10-19).** Kaggle's Terms of Use allow only
+> "internal, personal, non-commercial use", and its Acceptable Use Policy
+> (kaggle.com/aup) bans using its resources for "server farming" or "activity
+> unrelated to ML data science". Running this skill's batch stage on Kaggle got
+> the author's account banned for "resource abuse". The Kaggle scripts now stop
+> with this message instead of running. Do not route around that, and never make
+> a second Kaggle account: the Terms ban that outright.
+>
+> Until a checked replacement is wired in: hard-surface props go through Kiln
+> (`references/kiln-route.md`, runs locally, no GPU). Organic meshes come one at
+> a time from the Hugging Face Space (`scripts/image_to_3d.py`). Read Hugging
+> Face's terms for your use before relying on it: they have not been checked for
+> this. With a 16GB NVIDIA GPU you could run Hi3DGen yourself, but this skill
+> does not ship a script for that yet.
 
 > **First time on this machine?** Read `LOCAL.md` in this folder. If it does not exist, run the
 > `roblox-skills-setup` skill (or copy `LOCAL.template.md` to `LOCAL.md` and fill it in).
@@ -29,7 +44,7 @@ on 2026-08-26** against the same two assets. Read this before trusting any stage
 | Stage | State |
 |---|---|
 | 1-2 concept image + gate | **works.** 16/16 generated, and the gate rejected 2 of them on sight |
-| 3 Hi3DGen on Kaggle | **works.** ~102 GPU-seconds per asset, ~600k faces out |
+| 3 Hi3DGen | **works** (measured on Kaggle, which is now OFF). ~102 GPU-seconds per asset, ~600k faces out |
 | 4 Blender weld/decimate/UV/normal bake | **works.** 74:1 and 104:1 reductions, 6,000 tris, maps baked |
 | 4b colour | **works. PAINT it** (`paint_texture.py`), do not project. Projection was rebuilt on 2026-08-26 and still smears; painting is exact. See below |
 | 5 upload | **works**, run end to end 2026-08-26. Free: Open Cloud key costs nothing and Model/Image uploads cost no Robux. Needed only for a PERMANENT asset; stage 6 iterates with no upload at all |
@@ -264,9 +279,8 @@ game. Two measured things decide this stage:
   fallback of last resort now, not the default.
 - **Anonymous FLUX is queue-limited.** First request 12s, the very next one
   refused with "No GPU was available after 60s". The backend retries with
-  backoff; `HF_TOKEN` (free account) buys priority, and
-  `kaggle_run.py push --mode images` sidesteps the queue entirely by running
-  schnell on your own Kaggle GPU.
+  backoff; `HF_TOKEN` (free account) buys priority, and the old
+  Kaggle image route is OFF (see the notice at the top).
 
 The `--preset creature` framing is not cosmetic, and **a prettier picture can
 make a worse mesh**. Hi3DGen reads an estimated *normal map*, not colour, so flat
@@ -289,21 +303,11 @@ seconds. Do not proceed on a "close enough".
 ### 3. Image to 3D on Hi3DGen
 
 Hosted, not local: Hi3DGen needs a 16GB NVIDIA GPU, and without one (for example a card with
-less VRAM, or no CUDA) local generation is impossible rather than merely slow. Two venues,
-and **the choice is about throughput, not quality** - the same weights either way:
+less VRAM, or no CUDA) local generation is impossible rather than merely slow. Kaggle is
+OFF (see the notice at the top), so that leaves the Space:
 
-**Kaggle (default for any batch).** 30 GPU-hours per **week** on a P100 or two T4s.
-
-```bash
-python scripts/kaggle_run.py push   --outdir work/farm --slug farm-animals
-python scripts/kaggle_run.py status --slug farm-animals --wait 3600
-python scripts/kaggle_run.py fetch  --outdir work/farm --slug farm-animals
-```
-
-Concepts go up as a private dataset, `kaggle_hi3dgen.py` goes up as a private
-script kernel attached to it, and one GLB comes back per image. Needs a
-**phone-verified** Kaggle account (that is what unlocks GPU and internet on
-kernels) and `KAGGLE_API_TOKEN`, or the classic `~/.kaggle/kaggle.json`.
+**Kaggle: OFF. Do not use it.** See the notice at the top. `kaggle_run.py` now
+stops with that message instead of running.
 
 **A HuggingFace Space (one-offs only).** `python scripts/image_to_3d.py --image
 work/concept.png --out work/high.glb`. Free ZeroGPU is **300 GPU-seconds per
@@ -528,8 +532,7 @@ skipped unless `--force`.
 ```bash
 python scripts/batch.py concepts --outdir work/farm   # 1-2  text -> concept png
 python scripts/batch.py sheet    --outdir work/farm   #      LOOK at the gate sheet
-python scripts/kaggle_run.py push   --outdir work/farm --slug farm     # 3
-python scripts/kaggle_run.py fetch  --outdir work/farm --slug farm
+# 3  Kaggle is OFF: image_to_3d.py per asset (the Space), or Kiln for hard surface
 python scripts/batch.py meshes   --outdir work/farm   # 4    -> low.glb + normal
 python scripts/batch.py orient   --outdir work/farm   #      LOOK once, whole set
 python scripts/batch.py paint    --outdir work/farm   # 4b   spec + colour map

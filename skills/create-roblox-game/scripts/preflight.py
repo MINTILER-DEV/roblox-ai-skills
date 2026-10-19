@@ -140,27 +140,12 @@ def check_place_saved() -> tuple[bool, str]:
 
 
 def check_kaggle() -> tuple[bool, str]:
-    """AUTHENTICATE, do not go looking for credential files.
+    """KAGGLE IS OFF (2026-10-19): Kaggle's terms ban this use and it got an account banned.
 
-    Two earlier versions of this check guessed from filenames and both were
-    wrong: one demanded KAGGLE_KEY and reported FAIL over a working setup, the
-    next found ~/.kaggle/access_token and hedged it as UNVERIFIED when it in
-    fact authenticates. The credential shape is the client's business. The only
-    question preflight should ask is whether an API call succeeds.
-
-    kernels_list is read-only and creates nothing.
+    Preflight no longer calls Kaggle at all. The row stays so a stale LOCAL.md that
+    still lists Kaggle gets told why it is not used.
     """
-    try:
-        from kaggle.api.kaggle_api_extended import KaggleApi  # noqa: PLC0415
-    except ImportError:
-        return False, "kaggle package not installed (pip install kaggle)"
-    try:
-        api = KaggleApi()
-        api.authenticate()
-        api.kernels_list(user=os.environ.get("KAGGLE_USERNAME") or "kaggle", page_size=1)
-        return True, "authenticates (kernels API reachable)"
-    except (Exception, SystemExit) as exc:  # noqa: BLE001 - kaggle exits when no token is set
-        return False, f"not set up (no Kaggle token yet?): {type(exc).__name__}: {str(exc)[:60]}"
+    return False, "OFF: Kaggle's terms ban this use (see roblox-3d-model SKILL.md). Not used"
 
 
 def main() -> int:

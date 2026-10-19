@@ -2,7 +2,7 @@
 
 Copy this file to `LOCAL.md` and fill it in. `LOCAL.md` is yours and is never shared.
 Never write a key or token value into any file: set them as environment variables
-(or, for Kaggle, in `~/.kaggle/kaggle.json`), and record only whether they are set.
+and record only whether they are set.
 
 ## Tools
 
@@ -19,7 +19,7 @@ Never write a key or token value into any file: set them as environment variable
 
 - HF_TOKEN: free HuggingFace token. Stages 1 and 3. Raises the ZeroGPU quota. Set: yes / no
 - CF_ACCOUNT_ID, CF_API_TOKEN: Cloudflare Workers AI (Account > Workers AI > Read). Stage 1 only, optional. Set: yes / no
-- KAGGLE_API_TOKEN, or `~/.kaggle/kaggle.json` (plus KAGGLE_USERNAME if the config file is absent): your own phone-verified Kaggle account, for the GPU stage. Set: yes / no
+- Kaggle: NOT USED. Its terms ban this pipeline's use (see the notice in SKILL.md). Leave it unset.
 - ROBLOX_API_KEY: Open Cloud key with Assets write, for the permanent upload route only. Set: yes / no
 - ROBLOX_USER_ID or ROBLOX_GROUP_ID: who uploaded assets are created under. Set: yes / no
 - POLLINATIONS_TOKEN: optional, only for the Pollinations fallback. Set: yes / no

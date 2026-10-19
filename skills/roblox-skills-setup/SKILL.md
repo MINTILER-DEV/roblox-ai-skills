@@ -23,7 +23,7 @@ writes those files with the user, so nothing has to be edited by hand.
 - **Install nothing without a yes.** Explain what a missing tool is for and
   give the link or command; the user decides. Optional tools stay optional.
 - **Only configure what they will use.** If they never want 3D models, skip
-  Blender and Kaggle. A skill they skip keeps its template and can be set up
+  Blender. Never set up Kaggle: its terms ban these skills' use. A skill they skip keeps its template and can be set up
   later by running this skill again.
 
 ## Step 1: check the machine
@@ -51,8 +51,8 @@ order for someone new:
    time.
 3. **UI, maps, VFX, SFX**: Python only, plus Studio.
 4. **3D models and animation**: Blender 4.x. 3D models also need a GPU
-   service for the mesh step (a free Kaggle account, or a Hugging Face Space
-   with `HF_TOKEN`). Read `roblox-3d-model/references/licences.md` before
+   for the mesh step (a Hugging Face Space with `HF_TOKEN`). **Do not use Kaggle**: its terms ban this use and it got
+   an account banned. Read `roblox-3d-model/references/licences.md` before
    using a model: some model licences exclude some regions or commercial use.
 5. **Permanent uploads** (optional): a free Roblox Open Cloud API key with
    asset upload permission, in `ROBLOX_API_KEY`, and your `ROBLOX_USER_ID`.

@@ -5,6 +5,12 @@ description: Take a Roblox game from a genre to something built, assembled, play
 
 # Make a Roblox game, end to end
 
+> **KAGGLE IS OFF (2026-10-19). Do not use it for any stage.** Its terms only allow
+> personal, non-commercial, ML/data-science use, and running these skills' GPU
+> stages there got the author's account banned for "resource abuse". Never make a
+> second Kaggle account either. See the notice at the top of `roblox-3d-model`
+> for the routes to use instead.
+
 > **First time on this machine?** Read `LOCAL.md` in this folder. If it does not exist, run the
 > `roblox-skills-setup` skill (or copy `LOCAL.template.md` to `LOCAL.md` and fill it in).
 > `LOCAL.md` holds your paths and tool locations; it is yours and is never shared.
@@ -253,9 +259,9 @@ Checked live on 2026-08-30, not remembered:
 |---|---|
 | research, design, code, map, ui, sfx, vfx, assembly | **Ready.** Every one has proven tooling. The vfx stage needs a harvested library of your own (see below) |
 | animation | Ready. `RegisterKeyframeSequence` ids are session-local, and that is ACCEPTED: you right-click and save the animations at the end. A game testable in Studio counts as created, so this is not a blocker |
-| meshes | Ready end to end, upload included - proven 2026-08-26 with a cow and a pig, painted and uploaded. ~102 GPU-s per asset on Kaggle. Upload as `Model` never `Mesh`, texture as `Image` never `Decal` |
+| meshes | Ready end to end, upload included - proven 2026-08-26 with a cow and a pig, painted and uploaded. ~102 GPU-s per asset (measured on Kaggle, now OFF). Upload as `Model` never `Mesh`, texture as `Image` never `Decal` |
 | meshes: colour | **Ready. PAINT it** (`paint_texture.py`), which is exact because there is no camera to align. The older concept-*projection* route is the broken one and is only for assets that need the concept's actual markings |
-| meshes: Kaggle | **Authenticates.** Verified by a live `kernels_list` call |
+| meshes: Kaggle | **OFF (2026-10-19). Do not use.** Its terms ban this use; see the notice in roblox-3d-model |
 | playtest | **Studio's built-in MCP does have working play-mode tools.** The play-mode wall measured on this project belongs to the *third-party* server. See `references/mcp.md` - switch servers before build day |
 | publish | `ROBLOX_API_KEY` authenticates. The universe and place are **yours to mint by hand**, once, which the pipeline's own rules already count as a free intervention |
 

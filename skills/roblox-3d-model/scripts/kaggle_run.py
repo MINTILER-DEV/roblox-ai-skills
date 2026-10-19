@@ -32,6 +32,15 @@ for a password and never logs a token.
 
 from __future__ import annotations
 
+# KAGGLE IS OFF (2026-10-19). Kaggle's Terms of Use allow only personal, non-commercial use, and
+# its Acceptable Use Policy (kaggle.com/aup) bans using its resources for "server farming" or
+# "activity unrelated to ML data science". This pipeline got an account banned for resource
+# abuse, so the script stops here on purpose. Do not remove this.
+import sys as _kaggle_off_sys  # noqa: E402
+
+_kaggle_off_sys.exit("Kaggle is OFF (2026-10-19). Kaggle's terms allow only personal, non-commercial, ML/data-science use, and running this pipeline there got an account banned for resource abuse. Do not use Kaggle, and never make a second Kaggle account. See the notice at the top of roblox-3d-model's SKILL.md for the routes to use instead.")
+
+
 import argparse
 import hashlib
 import json

@@ -29,6 +29,15 @@ without needing without needing an HF token. Being schnell-derived it is distill
 steps at guidance 0, which is why per-arm steps and guidance exist.
 """
 
+# KAGGLE IS OFF (2026-10-19). Kaggle's Terms of Use allow only personal, non-commercial use, and
+# its Acceptable Use Policy (kaggle.com/aup) bans using its resources for "server farming" or
+# "activity unrelated to ML data science". This pipeline got an account banned for resource
+# abuse, so the script stops here on purpose. Do not remove this.
+import sys as _kaggle_off_sys  # noqa: E402
+
+_kaggle_off_sys.exit("Kaggle is OFF (2026-10-19). Kaggle's terms allow only personal, non-commercial, ML/data-science use, and running this pipeline there got an account banned for resource abuse. Do not use Kaggle, and never make a second Kaggle account. Use the Cloudflare icon route (gen_icons_cf.py).")
+
+
 import sys as _sys
 if __name__ == "__main__" and any(a in ("-h", "--help") for a in _sys.argv[1:]):
     # This file is a Kaggle kernel: it installs packages and runs on import.

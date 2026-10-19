@@ -5,6 +5,12 @@ description: Build Roblox game UI headlessly - HUD overlays, shops, inventories,
 
 # Roblox UI, headless
 
+> **KAGGLE IS OFF (2026-10-19). Do not use it for any stage.** Its terms only allow
+> personal, non-commercial, ML/data-science use, and running these skills' GPU
+> stages there got the author's account banned for "resource abuse". Never make a
+> second Kaggle account either. See the notice at the top of `roblox-3d-model`
+> for the routes to use instead.
+
 > **First time on this machine?** Read `LOCAL.md` in this folder. If it does not exist, run the
 > `roblox-skills-setup` skill (or copy `LOCAL.template.md` to `LOCAL.md` and fill it in).
 > `LOCAL.md` holds your paths and tool locations; it is yours and is never shared.
@@ -206,10 +212,8 @@ dilation-based uniform outline. Generated attempts returned a scribble for the X
 a down-arrow for the tick and a games controller for the heart. Geometry is not
 an image-generation problem, and a drawn set is consistent by construction.
 
-Kaggle stays the right venue for the 3D mesh stage, where a long GPU session with
-a big repo suits a notebook. If you use it, `PYTHONUTF8=1` on `fetch` is not
-optional on Windows - the Kaggle client writes the log with the default codec and
-dies on cp1252 partway through.
+Kaggle is OFF for everything, icons and meshes alike (see the notice at the top):
+its terms ban this use. Use the Cloudflare route above.
 
 ### 2. Pages
 

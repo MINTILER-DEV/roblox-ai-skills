@@ -2,7 +2,7 @@
 
     python scripts/batch.py concepts --outdir work/farm   # 1-2  text -> concept png
     python scripts/batch.py sheet    --outdir work/farm   #      LOOK at the gate sheet
-    #                        stage 3 (Kaggle) is run with kaggle_run.py
+    #                        stage 3 runs image_to_3d.py (Kaggle is OFF)
     python scripts/batch.py meshes   --outdir work/farm   # 4    glb -> low.glb + normal
     python scripts/batch.py orient   --outdir work/farm   #      LOOK once, record head ends
     python scripts/batch.py paint    --outdir work/farm   # 4b   spec + colour map
@@ -25,7 +25,7 @@ unless --force, which matters when stage 3 is metered GPU time.
 Layout under --outdir, one folder per asset:
 
     cow/concept.png     stage 1
-    cow/high.glb        stage 3  (from Kaggle or a Space)
+    cow/high.glb        stage 3  (from the Space)
     cow/out/low.glb     stage 4
     cow/out/normal.png  stage 4
     cow/out/report.json stage 4
@@ -282,7 +282,7 @@ def stage_meshes(manifest: dict, outdir: Path, only: str | None, force: bool,
 
     if missing:
         print(f"\n[batch] no high.glb yet for: {', '.join(missing)}")
-        print("[batch] Run stage 3 (Kaggle or a Space) for those first.")
+        print("[batch] Run stage 3 (image_to_3d.py on the Space; Kaggle is OFF) for those first.")
     if failures:
         print(f"[batch] FAILED: {', '.join(failures)}")
         return 1

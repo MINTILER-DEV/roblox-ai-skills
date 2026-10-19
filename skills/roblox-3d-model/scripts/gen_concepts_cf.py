@@ -190,9 +190,8 @@ def cmd_generate(args) -> int:
         print(f"\nFAILED ON CLOUDFLARE: {names}")
         print("Cloudflare's safety filter throws false positives (it refused "
               "'one metal grain silo tower'), so first try a REWORD. If that "
-              "fails, fall back to Kaggle for just these:\n")
-        print(f'  python kaggle_run.py push --outdir "{outdir}" --slug concepts-fallback '
-              f'--mode images --manifest {args.manifest} --only {names}')
+              "fails, use another concept route (concept_image.py). The Kaggle "
+              "fallback is OFF: its terms ban this use.")
     print("\nNext: look at _concept_variants.png, then --pick, then the mesh run.")
     return 0
 

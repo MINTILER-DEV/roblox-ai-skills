@@ -49,9 +49,23 @@ parts you want.
 
 - **Always:** Claude Code, Roblox Studio with its official MCP enabled, Python 3.11+.
 - **Code:** Rojo, Wally, Lune, Selene, StyLua (all free).
-- **3D models and animation:** Blender 4.x, and a free Kaggle or Hugging Face
-  account for the mesh-generation step.
+- **3D models and animation:** Blender 4.x, and a free Hugging Face account for
+  the mesh-generation step. **Do not use Kaggle**: see below.
 - **Permanent uploads (optional):** a free Roblox Open Cloud API key.
+
+## Kaggle is off (2026-10-19)
+
+Earlier versions of these skills ran the 3D mesh step (and an icon test) on free
+Kaggle GPUs. **Don't.** Kaggle's Terms of Use only allow "internal, personal,
+non-commercial use", and its Acceptable Use Policy (kaggle.com/aup) bans using its
+resources for "server farming" or "activity unrelated to ML data science". Running
+this pipeline there got my account banned for "resource abuse".
+
+The Kaggle scripts now stop with a message instead of running. If you set Kaggle up
+already, stop using it for your game, and don't make a second Kaggle account (the
+Terms ban that too). For now, hard-surface props go through Kiln and organic meshes
+through a Hugging Face Space, one at a time. Details at the top of
+`skills/roblox-3d-model/SKILL.md`. A checked replacement for batches is coming.
 
 ## Things to know
 

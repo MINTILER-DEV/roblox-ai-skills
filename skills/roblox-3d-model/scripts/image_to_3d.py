@@ -14,7 +14,7 @@ every stage after this one:
      concept image was the problem, and no reroll will fix it.
 
 Local generation needs a 16GB NVIDIA GPU. Without one (for example a card with less VRAM,
-or no CUDA), the Space or Kaggle is mandatory rather than convenient. Set HF_TOKEN to
+or no CUDA), the Space is mandatory rather than convenient (Kaggle is OFF: its terms ban this use). Set HF_TOKEN to
 raise the ZeroGPU quota above the signed-out floor and to get queue priority.
 """
 
