@@ -409,3 +409,64 @@ caught nothing wrong here precisely because it was checked before building.
 - **Play-mode output capture returned nothing** on this server. Do not rely on
   `get_playtest_output` to confirm a runtime script ran; verify what you can in
   edit mode and have a human press the key.
+
+---
+
+# Found 2026-10-08: the exporter was wrong, and every render vouched for it
+
+## 35. to_roblox.py mirrored limb ROLL and inverted torso/head LEAN
+
+The old rule `rx=-bx, ry=by, rz=bz` for every bone is right only for X and Z on
+the limbs. Read straight off the bone matrices: limb FK bones point DOWN (local
+X = -X, Y = down, Z = back), so their map is `rx=-bx, ry=-by, rz=bz`; UpTorso,
+HEAD and TORSO point UP and share Roblox's frame, so their map is the identity.
+Measured errors under the old rule: a cocked throwing arm 170 deg off, a bowed
+head 120 deg off (it played tipped BACK), a hand-on-hip 12 deg. The contact sheet
+cannot see it - it only proves render == spec. `scripts/rbx_axis_check.py` now
+compares every keyed part's full rotation (roll included) between Blender and
+the Roblox CFrame chain; `--legacy` reproduces the old failure so the checker
+is proven able to fail. Residual 1.4 deg = the rig's own FK bone tilt (0.5-0.7
+deg per bone), hence its tol 2.0.
+
+## 36. Enum.PoseEasingDirection In/Out are backwards
+
+Roblox's own docs: "for legacy compatibility reasons, the use of In and Out are
+backwards". `Out` = accelerate, `In` = decelerate. The old map sent spec "in"
+(accelerate into contact) to `In`, so strikes decelerated into contact in game.
+Fixed in to_roblox.py.
+
+## 37. Blender lerps Euler angles; Roblox slerps CFrames
+
+Every key can match and the PATH between keys still differs - 42 deg at the
+midpoint of a 4-frame throw. `rbx_axis_check.py --mid` reports it and prints the
+slerp midpoint as a ready-made beat; insert it and the render shows the in-game
+path.
+
+---
+
+# Found 2026-10-17 (a custom-mesh R6 monster)
+
+## 38. anim_render.py's grip.json measures the hand's "rest" box on a POSED frame (OPEN)
+
+`C_rest` is read from the RightHand mesh's bounding box at whatever frame the scene is on
+after baking (the last frame), not at rest. With a raised arm it reported a Tool.Grip of
+(0.82, -2.13, 1.83) for a lantern whose real grip is ~0. The PROP LANDMARKS lines are
+correct (they matched an independent probe to 0.01 stud); only grip.json is wrong. Frame 0
+is not rest either (FK bones extrapolate the first beat backwards). Fix: capture the hand
+box before any keys are inserted. Until then, do not trust grip.json from an animated arm.
+
+## 39. A rigid R6 leg with a forward-pointing foot is LONGER swung back than forward
+
+Measured on a custom R6 monster rig: lowest-vertex depth below the hip 3.93 standing, 4.11 at 17 deg
+back (toe down), 3.48 at 30 deg forward (heel). A symmetric stiff swing therefore never lets
+the front foot land - the rear toe is always lowest and the ground solve keeps it planted
+while it slides forward. r6_clip.py's stance-slip metric caught it (-17 studs/s samples).
+Fix used: translate each hip (Pose position, hidden inside the body mesh) by depth(theta) - ref,
+and drive the stance angle at the no-slip rate dtheta/dt = speed / depth(theta). Measure slip
+on the MATERIAL contact vertex followed frame to frame - the lowest-point location jumps
+heel -> toe as the foot rolls and reads as slip when there is none.
+
+## 40. Blender exits 0 on a Python exception in --python unless told otherwise
+
+`blender --background --python x.py` with an exception inside x.py returns 0. Pass
+`--python-exit-code 1`. Also `os._exit()` skips the stdout flush - flush every print.

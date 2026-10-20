@@ -201,7 +201,7 @@ Before authoring:
 2. **Write the answer into the spec as `_intent`,** as a sentence about the
    weapon: "head up, shaft crossing the lead shoulder", "blade angled up and
    forward from a lowered hand". That sentence is what the contact sheet gets
-   judged against - see step 4.
+   judged against - see step 3.
 3. **Sanity-check the obvious ones from the list below** before reaching for a
    search.
 
@@ -228,7 +228,7 @@ from the field of view, so nothing leaves frame; `margin` (default 1.10) is the 
 knob. Render **at least two angles** — a right-leg kick is invisible from the left.
 
 **Then judge the sheet against the REFERENCE, not against itself.** Open the
-`_intent` sentence from step 3a and check the sheet frame by frame against it:
+`_intent` sentence from step 2a and check the sheet frame by frame against it:
 is the head up, is the blade leading, does the shaft cross in front of the body.
 A contact sheet only ever proves that the render matches the spec. It cannot tell
 you the spec was right, and every stage downstream will treat it as ground truth
@@ -288,6 +288,12 @@ the defect only exists while two clips are playing at once.
 **Prefer R15.** R15 has elbows and knees, so it has a joint for every angle a
 reference shows, and FK maps one control bone to each.
 
+**A custom-mesh R6 rig with no .blend** (rigid GLB parts + probed Motor6D C0/C1): author in
+joint space with `scripts/r6_clip.py` (renders the real parts through the exact Motor6D chain,
+grounds the root per key, reports foot y / stance slip / limb overlaps) and emit Luau with
+`scripts/r6_luau.py` (verbatim Pose CFrames, R15 specs too, one replaced-wholesale folder).
+Conversion lives in `scripts/r6_joint.py`. See traps 39-40.
+
 R6 limbs are **rigid single blocks with no elbow**. A folded boxing guard is not a
 pose R6 can hold at all; asking for it raises the whole arm. Use R6 only when the
 game requires it, and expect stiff pose-to-pose motion — which is R6's native look,
@@ -304,6 +310,10 @@ blender --background <rig>.blend --enable-autoexec --python scripts/anim_render.
 # 2. generate the Studio builder for one or many specs
 python scripts/to_roblox.py kick.json punch.json wave.json > build.lua
 ```
+
+2b. **Prove the export before Studio:** `blender --background <rig>.blend --enable-autoexec --python scripts/rbx_axis_check.py -- spec.json --mid`.
+   It compares every keyed part's full rotation between the render and the Roblox CFrame chain (traps 35-37).
+   `to_roblox.py --folder ReplicatedStorage.X.Y --no-verify` emits a yield-free builder that returns a summary; spec `markers` become KeyframeMarkers.
 
 3. Paste `build.lua` into `execute_luau`. It creates
    `ReplicatedStorage.CustomAnims` with one `KeyframeSequence` per spec, replacing
@@ -324,7 +334,12 @@ ContentId you assign straight to `Animation.AnimationId`. It needs only the
 Animation capability, so a LocalScript can call it at runtime — no asset upload,
 no moderation, no account. Only the **bare** string works (`hash://` and
 `rbxasset://` both fail). Those ids are **session-local**: fine for testing, but
-publishing needs real uploaded asset IDs.
+publishing needs real uploaded asset IDs. **`scripts/upload_animation.py` does that
+headless** (2026-10-08): dump the KeyframeSequences from Studio, rebuild each as a
+real .rbxm with Rojo, upload as Open Cloud assetType `Animation`, poll, and emit
+`apply_ids.luau`, which sets an `AnimationId` attribute on each sequence. Verified
+lossless (80/80 poses + markers) and playable on a character, with no
+right-click "Save to Roblox" by hand.
 
 Things that will catch you (details in traps 29–34):
 
