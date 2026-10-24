@@ -470,3 +470,47 @@ heel -> toe as the foot rolls and reads as slip when there is none.
 
 `blender --background --python x.py` with an exception inside x.py returns 0. Pass
 `--python-exit-code 1`. Also `os._exit()` skips the stdout flush - flush every print.
+
+---
+
+# Found 2026-10-22 (animation tutorial capture)
+
+## 41. rbx_axis_check.py printed per-part errors only for FAILING parts
+
+Its docstring promised "the worst error per part", but the loop printed only parts over
+`--tol`, so a PASS showed one overall number and nothing per joint - you could not see that a
+part sat at 1.97 of a 2.0 tolerance. Fixed: every keyed part prints, worst first, with
+`<-- FAIL` on the ones over tolerance. Parts with exactly zero error (torso and head under the
+identity map) still do not appear, because nothing beats the 0 start value.
+
+## 42. Studio edit mode: StepAnimations poses a rig; new dummies draw gizmos
+
+- `Animator:StepAnimations(0)` after `track:Play(); track:AdjustSpeed(0); track.TimePosition = t`
+  DOES pose a rig in EDIT mode (plugin context, so `execute_luau` can call it). Trap 33 is about
+  writing `.Transform` by hand; this is the Animator's own step and the parts move. Measured on a
+  standard R6 dummy: the edit-mode pose matched the Play-mode pose to 0.0001 studs.
+- `Players:CreateHumanoidModelFromDescription(HumanoidDescription.new(), ...)` makes a BLACK
+  dummy (every body colour defaults to 0,0,0) and an R15 one is built from AnimationConstraints
+  + BallSocketConstraints, which Studio draws as attachment dots and joint lines over the body in
+  edit mode. Set the six body colours on the description, and for a recorded showcase swap each
+  AnimationConstraint for a Motor6D (Part0/Part1 from the attachments' parents, C0/C1 = the
+  attachments' CFrames) and destroy the constraints: clips bind by part name either way.
+- Setting `workspace.CurrentCamera.CFrame` in edit mode reads back as set, but a window capture
+  can show a stale or different view. For recordings, frame shots in Play mode with a
+  `BindToRenderStep` camera after `Enum.RenderPriority.Camera`.
+- An R6 model from `CreateHumanoidModelFromDescription(..., R6)` does NOT pivot at its
+  HumanoidRootPart: the pivot sits 1.5 studs higher (the head), so `m:PivotTo(spot)` with the
+  root's intended height sank the dummy 1.5 studs into the floor (shipped in a recording).
+  Place it by the root: `m:PivotTo(want * hrp.CFrame:ToObjectSpace(m:GetPivot()))`, then
+  check the lowest part's bottom equals the floor's top as a number.
+
+## 43. Slerp between two GROUNDED R6 keys sags through the floor; a rigid R6 cannot roll over its head
+
+Found 2026-10-22 (FlipRollStrike). Every key was placed with the lowest point of the whole body on y=0, yet
+r6_clip measured a foot 0.35 studs under the floor between keys (landing absorb -> dive, roll exit): each joint
+slerps on its own, so the in-between pose is not grounded. Fix: put a key on every whole frame of a grounded
+segment along the same eased path and ground each one (FlipRollAttack/gen_flip.py densify pass) - lowest foot
+y then 0.000. Watch keys at fractional frame times: a round()-based frame range skipped the frame in between.
+Also: r6_clip's ground solve only looks at FEET; for rolls, flips and get-ups ground on every part's corners.
+A straight forward roll on R6 passes through standing on the 1.25-stud head (torso centre rises ~1.5 studs
+mid-roll); tuck limbs to ~110-128 deg swing and keep the tuck until the last quarter so the shape stays round.

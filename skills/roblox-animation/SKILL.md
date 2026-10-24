@@ -117,8 +117,10 @@ Measured on a mid-range PC, one animation of 24–36 frames:
 **Machine time for a finished, in-Studio animation: well under a minute.** What
 actually costs time is *authoring iterations*, so spend them on the preview and
 never on the full render. With `references/pose-recipes.md` to start from, a
-second move should land in 1–3 previews — the punch and the wave in
-`references/` were both right on the **first** try.
+second move should land in 1–3 previews — the punch in `references/` was right on
+the **first** try. The wave example was NOT: it passed every number and still read as a
+hand on the head, and it took a human eye to say so (fixed 2026-10-23). Numbers prove the
+pose matches the spec; only looking proves the spec is the right move.
 
 `"report": true` prints every joint's position at each beat: when a pose looks
 wrong it names the joint in one run instead of five render passes of guessing.
@@ -293,6 +295,10 @@ joint space with `scripts/r6_clip.py` (renders the real parts through the exact 
 grounds the root per key, reports foot y / stance slip / limb overlaps) and emit Luau with
 `scripts/r6_luau.py` (verbatim Pose CFrames, R15 specs too, one replaced-wholesale folder).
 Conversion lives in `scripts/r6_joint.py`. See traps 39-40.
+A **standard R6 avatar** works the same way (proven 2026-10-22): probe the six Motor6Ds of a
+`CreateHumanoidModelFromDescription(desc, Enum.HumanoidRigType.R6)` dummy (they exist in edit
+mode), build box GLBs at the real part sizes at the chain's rest centres, and write rig.json;
+the clip played in Studio matched the render at the contact key to 0.00002 studs.
 
 R6 limbs are **rigid single blocks with no elbow**. A folded boxing guard is not a
 pose R6 can hold at all; asking for it raises the whole arm. Use R6 only when the

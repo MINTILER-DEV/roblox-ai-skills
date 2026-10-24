@@ -181,8 +181,10 @@ for path in args.specs:
     bad = {p: v for p, v in worst.items() if v[0] > args.tol}
     print(f"=== {os.path.basename(path)} ({conv['name']}): worst part error "
           f"{max([v[0] for v in worst.values()] or [0]):.2f} deg")
-    for p, (e, t) in sorted(bad.items(), key=lambda kv: -kv[1][0]):
-        print(f"    {p:15s} {e:7.2f} deg at t={t}")
+    # Every part, not only the failures: a PASS that prints nothing per part
+    # cannot show how close each joint came to the tolerance.
+    for p, (e, t) in sorted(worst.items(), key=lambda kv: -kv[1][0]):
+        print(f"    {p:15s} {e:7.2f} deg at t={t}" + ("  <-- FAIL" if p in bad else ""))
     worst_all = max([worst_all] + [v[0] for v in worst.values()])
 print(f"=== RESULT: worst {worst_all:.2f} deg (tol {args.tol}) - "
       + ("PASS" if worst_all <= args.tol else "FAIL"), flush=True)

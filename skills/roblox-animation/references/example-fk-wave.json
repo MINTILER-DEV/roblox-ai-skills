@@ -65,16 +65,16 @@
         },
         "FK_UpperArm.R": {
           "rot": [
-            -12,
+            -25,
             0,
-            150
+            82
           ]
         },
         "FK_LowerArm.R": {
           "rot": [
             0,
             0,
-            -22
+            84
           ]
         },
         "FK_UpperArm.L": {
@@ -170,16 +170,16 @@
         },
         "FK_UpperArm.R": {
           "rot": [
-            -14,
+            -25,
             0,
-            146
+            86
           ]
         },
         "FK_LowerArm.R": {
           "rot": [
             0,
             0,
-            -62
+            112
           ]
         },
         "FK_UpperArm.L": {
@@ -275,16 +275,16 @@
         },
         "FK_UpperArm.R": {
           "rot": [
-            -12,
+            -25,
             0,
-            150
+            82
           ]
         },
         "FK_LowerArm.R": {
           "rot": [
             0,
             0,
-            -22
+            84
           ]
         },
         "FK_UpperArm.L": {
@@ -380,16 +380,16 @@
         },
         "FK_UpperArm.R": {
           "rot": [
-            -14,
+            -25,
             0,
-            146
+            86
           ]
         },
         "FK_LowerArm.R": {
           "rot": [
             0,
             0,
-            -62
+            112
           ]
         },
         "FK_UpperArm.L": {
@@ -485,16 +485,16 @@
         },
         "FK_UpperArm.R": {
           "rot": [
-            -12,
+            -25,
             0,
-            150
+            82
           ]
         },
         "FK_LowerArm.R": {
           "rot": [
             0,
             0,
-            -22
+            84
           ]
         },
         "FK_UpperArm.L": {
@@ -555,5 +555,6 @@
         }
       }
     }
-  ]
+  ],
+  "_fixed": "2026-10-23: the original held the upper arm near vertical (Z 150) and tipped the forearm out sideways, which read as a stretch / hand on head, not a wave. Now: upper arm out at about shoulder height and forward (X -25, Z 82-86), forearm upright (Z 84-112), rocking +-14 deg."
 }
