@@ -84,6 +84,14 @@ See [Codex MCP configuration](https://developers.openai.com/codex/mcp/).
 Builds retain six-section handoffs and the original quality gates. This port does
 not imply the external generation services or your Studio installation were tested.
 
+## Validate the port
+
+Run `python -m unittest discover -s tests -v`. The offline checks cover fresh and
+repeat installation, settings preservation, backup placement, rollback after a
+copy failure, Codex MCP configuration reporting, and scaffolding from an installed
+pack. They also exercise PowerShell and Bash entry points when available.
+These checks do not start Studio, call generation services, or upload assets.
+
 ## What you need
 
 Not everything is needed for everything. The setup skill only asks about the

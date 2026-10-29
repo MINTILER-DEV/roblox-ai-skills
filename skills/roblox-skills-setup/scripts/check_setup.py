@@ -73,11 +73,13 @@ def find_tool(name: str) -> str | None:
     return None
 
 
-def studio_mcp() -> str:
+def studio_mcp(configs: list[Path] | None = None) -> str:
     """Inspect Codex TOML registrations, reporting server names only, never values."""
-    configs = [CODEX_HOME / "config.toml"]
-    for folder in (Path.cwd(), *Path.cwd().parents):
-        configs.append(folder / ".codex" / "config.toml")
+    if configs is None:
+        configs = [CODEX_HOME / "config.toml"]
+        for folder in (*reversed(Path.cwd().parents), Path.cwd()):
+            configs.append(folder / ".codex" / "config.toml")
+    registered = {}
     for cfg in dict.fromkeys(configs):
         try:
             data = tomllib.loads(cfg.read_text(encoding="utf-8-sig"))
@@ -86,12 +88,15 @@ def studio_mcp() -> str:
         servers = data.get("mcp_servers", {})
         if not isinstance(servers, dict):
             continue
-        hits = sorted(name for name, settings in servers.items()
-                      if ("roblox" in name.lower() or "studio" in name.lower())
-                      and isinstance(settings, dict) and settings.get("enabled", True))
-        if hits:
-            return (f"registered as {', '.join(hits)} (in {cfg.name}); registration is not a "
-                    "connection test. Confirm with `codex mcp list` and a live Studio state call")
+        for name, settings in servers.items():
+            if isinstance(settings, dict):
+                registered.setdefault(name, {}).update(settings)
+    hits = sorted(name for name, settings in registered.items()
+                  if ("roblox" in name.lower() or "studio" in name.lower())
+                  and settings.get("enabled", True))
+    if hits:
+        return (f"registered as {', '.join(hits)} (in config.toml); registration is not a "
+                "connection test. Confirm with `codex mcp list` and a live Studio state call")
     return ("not found in local Codex TOML config. A desktop connector or plugin may provide it: "
             "discover the current tools, call list_roblox_studios, then get_studio_state. "
             "If unavailable, enable Studio's MCP server and connect it in Codex")

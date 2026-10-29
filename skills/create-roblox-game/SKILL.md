@@ -1,6 +1,6 @@
 ---
 name: create-roblox-game
-description: Build a Roblox game through research, design, code, assets, Studio assembly, playtest, and publishing, with durable section handoffs. Use for whole-game creation or continuing an existing build stage.
+description: "Build a Roblox game through research, design, code, assets, Studio assembly, playtest, and publishing, with durable section handoffs. Use for whole-game creation or continuing an existing build stage."
 ---
 
 # Make a Roblox game, end to end

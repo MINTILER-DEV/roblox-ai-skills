@@ -166,8 +166,8 @@ RULES = [
     "the skill's 'the run does not stop' rule applies in full; `section.py close N` passing "
     "is the only place you stop. Never start the next section's work, even with budget left.",
     "STAY INSIDE CODEX AND ROBLOX STUDIO. Work through the skills, MCPs and CLIs. No "
-    "browser-driving tools (browser pane, Chrome), no web-GUI generators. WebSearch and "
-    "web search and fetch tools inside Codex are fine. Screen access is for Roblox Studio only.",
+    "browser-driving tools (browser pane, Chrome), no web-GUI generators. Web search and "
+    "fetch tools inside Codex are fine. Screen access is for Roblox Studio only.",
     "NOTHING IN STUDIO BY THE USER'S HAND. Never ask the user to place, type, edit or configure "
     "anything in Studio, and never ask them to leave Codex or Studio. You may ask for: "
     "pressing Play or Stop, clicking Publish, approving a tool call, restarting a stuck MCP, "

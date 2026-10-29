@@ -1,6 +1,6 @@
 ---
 name: roblox-build-orchestrator
-description: Coordinate a Roblox game build with independent asset workers, one Studio writer, timed stage logs, fallbacks, and a defects ledger. Use for full builds or evaluating parallel asset production.
+description: "Coordinate a Roblox game build with independent asset workers, one Studio writer, timed stage logs, fallbacks, and a defects ledger. Use for full builds or evaluating parallel asset production."
 ---
 
 # Roblox Build Orchestrator

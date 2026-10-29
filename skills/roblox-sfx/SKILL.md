@@ -1,6 +1,6 @@
 ---
 name: roblox-sfx
-description: Source, verify and wire the sound for a Roblox game from the Creator Store by asset id - footsteps, gunshots, animal calls, UI clicks, ambience, music - with no upload, no Open Cloud audio quota and no API key. Searches the same unauthenticated toolbox endpoints Studio's own audio tab uses, then PROVES each candidate in Studio (IsLoaded plus a measured Sound.TimeLength) before anything is chosen, because the toolbox's own duration field is wrong often enough to be dangerous. Emits a SoundBank data module, an Sfx runtime helper that fails inert, and an install script so the bank can be heard in an open place immediately. Use whenever the user wants sound effects, audio, SFX, music or ambience for a Roblox game, wants sounds found and wired rather than dragged in by hand, is picking audio for a build, or asks why a Sound is silent, has no length, or will not load in their place.
+description: "Source and verify Roblox sound effects from Creator Store asset IDs, then emit role-based sound banks and playback probes. Use for footsteps, combat, UI, ambience, or music selection and wiring; preserve licence notes and upload boundaries."
 ---
 
 # Roblox sound, by id, verified

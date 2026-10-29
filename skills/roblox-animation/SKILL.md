@@ -1,6 +1,6 @@
 ---
 name: roblox-animation
-description: Author Roblox character animations (R15 or R6) headlessly in Blender from a JSON pose spec, verify them by rendering contact sheets and GIFs and match a reference pose. Use this whenever the user wants to make, generate, or automate a Roblox animation — a punch, swing, emote, idle, walk, death, tool action — or wants an animation built to match a reference pose, or asks to animate a .blend rig without opening Blender's UI. Also trigger when a Roblox animation "comes apart", limbs detach, a rig poses correctly in script but renders wrong, limbs pop or flip between frames, or a pose looks nothing like the reference.
+description: "Author R15 or R6 Roblox character animations headlessly in Blender from JSON pose specifications. Verify contact sheets and GIFs, export KeyframeSequence data, and optionally upload. Use for animation creation, retiming, or reference matching."
 ---
 
 # Roblox animation, headless

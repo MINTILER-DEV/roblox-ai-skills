@@ -1,6 +1,6 @@
 ---
 name: roblox-vfx
-description: Harvest free Creator Store VFX packs, which you have taken into your own Roblox account, into your own searchable library of portable JSON particle recipes by reading every emitter property out of Studio, then classify, find, curate and emit them as a Luau runtime module (VFXKit) that builds them on any part with scale and tint. No effects ship with this skill, only the tooling. Verified by phase-frozen edit-mode screenshots, never by a metric. Use whenever the user wants a Roblox particle effect, explosion, aura, hit effect, fire, smoke, sparks or magic effect found and wired rather than dragged in by hand, wants to build a reusable VFX library from packs they own, or asks why their ParticleEmitter is invisible, never stops, or looks nothing like it did in the pack they copied it from.
+description: "Harvest owned Creator Store VFX packs into a searchable JSON recipe library, verify fidelity, curate effects, and emit a reusable Roblox VFX kit. Use for particle library ingestion, effect selection, composition, and game integration."
 ---
 
 # Roblox VFX, headless

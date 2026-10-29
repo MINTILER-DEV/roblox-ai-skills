@@ -1,6 +1,6 @@
 ---
 name: roblox-skills-setup
-description: Configure this Roblox skill pack on the current machine: detect tools and Studio MCP, resolve paths, write personal LOCAL.md settings, and smoke-test selected pipelines. Use after installation or when paths or tools change.
+description: "Configure this Roblox skill pack on the current machine: detect tools and Studio MCP, resolve paths, write personal LOCAL.md settings, and smoke-test selected pipelines. Use after installation or when paths or tools change."
 ---
 
 # Set up the Roblox skills on this machine
