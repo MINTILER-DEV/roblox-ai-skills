@@ -13,14 +13,16 @@ import os
 import platform
 import shutil
 import sys
+import tomllib
 from pathlib import Path
 
 HOME = Path.home()
-SKILLS_DIR = HOME / ".claude" / "skills"
-AGENTS_DIR = HOME / ".claude" / "agents"
+CODEX_HOME = Path(os.environ.get("CODEX_HOME") or HOME / ".codex")
+SKILLS_DIR = Path(os.environ.get("ROBLOX_SKILLS_DIR") or Path(__file__).resolve().parents[2])
+AGENTS_DIR = CODEX_HOME / "agents"
 
 SKILLS = [
-    "create-roblox-game", "roblox-build-orchestrator", "roblox-code", "roblox-map", "roblox-ui",
+    "roblox-skills-setup", "create-roblox-game", "roblox-build-orchestrator", "roblox-code", "roblox-map", "roblox-ui",
     "roblox-vfx", "roblox-sfx", "roblox-animation", "roblox-3d-model", "roblox-texture-gen",
 ]
 
@@ -72,28 +74,27 @@ def find_tool(name: str) -> str | None:
 
 
 def studio_mcp() -> str:
-    """The official Roblox Studio MCP is registered in Claude Code's config. Report by name only."""
-    def servers(node, out):
-        # mcpServers blocks sit at the top level and under each project entry
-        if isinstance(node, dict):
-            for k, v in node.items():
-                if k == "mcpServers" and isinstance(v, dict):
-                    out.update(v.keys())
-                else:
-                    servers(v, out)
-        return out
-
-    for cfg in (HOME / ".claude.json", HOME / ".claude" / "settings.json", Path.cwd() / ".mcp.json"):
+    """Inspect Codex TOML registrations, reporting server names only, never values."""
+    configs = [CODEX_HOME / "config.toml"]
+    for folder in (Path.cwd(), *Path.cwd().parents):
+        configs.append(folder / ".codex" / "config.toml")
+    for cfg in dict.fromkeys(configs):
         try:
-            names = servers(json.loads(cfg.read_text(encoding="utf-8")), set())
+            data = tomllib.loads(cfg.read_text(encoding="utf-8-sig"))
         except (OSError, ValueError):
             continue
-        hits = sorted(n for n in names if "roblox" in n.lower() or "studio" in n.lower())
+        servers = data.get("mcp_servers", {})
+        if not isinstance(servers, dict):
+            continue
+        hits = sorted(name for name, settings in servers.items()
+                      if ("roblox" in name.lower() or "studio" in name.lower())
+                      and isinstance(settings, dict) and settings.get("enabled", True))
         if hits:
-            return f"registered as {', '.join(hits)} (in {cfg.name}); confirm it connects with `claude mcp list`"
-    return ("not in Claude Code's config files. It may be registered another way (the desktop app or a plugin): "
-            "the real test is calling get_studio_state with Studio open. If that fails, enable the MCP in Studio "
-            "and add it to Claude Code")
+            return (f"registered as {', '.join(hits)} (in {cfg.name}); registration is not a "
+                    "connection test. Confirm with `codex mcp list` and a live Studio state call")
+    return ("not found in local Codex TOML config. A desktop connector or plugin may provide it: "
+            "discover the current tools, call list_roblox_studios, then get_studio_state. "
+            "If unavailable, enable Studio's MCP server and connect it in Codex")
 
 
 def main() -> int:
@@ -111,9 +112,9 @@ def main() -> int:
                              "LOCAL.md": (d / "LOCAL.md").exists(),
                              "template": tpl.exists(),
                              # a template that says it needs nothing is ready as installed
-                             "needs_settings": not tpl.exists() or not any(
-                                 k in text for k in ("needs no machine-specific", "needs nothing machine-specific"))}
-    rows["agents"] = sorted(p.stem for p in AGENTS_DIR.glob("roblox-*.md")) if AGENTS_DIR.exists() else []
+                             "needs_settings": s != "roblox-skills-setup" and (not tpl.exists() or not any(
+                                 k in text for k in ("needs no machine-specific", "needs nothing machine-specific")))}
+    rows["agents"] = sorted(p.stem for p in AGENTS_DIR.glob("roblox-*.toml")) if AGENTS_DIR.exists() else []
 
     if "--json" in sys.argv:
         print(json.dumps(rows, indent=1))

@@ -57,18 +57,17 @@ than mutating Studio directly. `roblox-ui` emits a `.model.json` and a Luau
 builder. `roblox-3d-model` emits meshes. `roblox-animation` emits a spec. The
 boundary was already there; this just stops anything from crossing it.
 
-## Enforce it with the allowlist, not the prompt
+## Codex enforcement limits
 
-Every worker definition carries `disallowedTools: mcp__robloxstudio-mcp`. That is
-deliberate and it is not redundant with the instructions in the body of the file.
+Native custom agents inherit the parent's permissions and MCP servers. The
+`developer_instructions` in `agents/*.toml` forbid Studio tools, bridge scripts,
+and uploads, but they are not a per-tool denylist. Do not claim isolation merely
+because the worker role says "no Studio".
 
-A prompt is a request, and a model under time pressure with a blocked task and a
-Studio tool visible in its list will eventually reach for it, entirely reasonably,
-because from inside that context it looks like the helpful thing to do. An
-allowlist is a boundary the harness enforces, so the question never arises.
-
-If you add a worker, copy the `disallowedTools` line first and write the body
-second.
+Give each worker a distinct output directory. Return all Studio-dependent steps
+(including mesh-generation fallbacks) to the manager. If the job requires a hard
+technical boundary, use a separate environment without Studio MCP, local bridges,
+or upload credentials, or execute the stage serially on the manager thread.
 
 ## The one exception worth naming
 

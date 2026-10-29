@@ -39,7 +39,7 @@ def main() -> int:
     body = f"""--!strict
 -- GENERATED FILE - DO NOT EDIT BY HAND.
 -- Source: {note}, written by roblox-ui/scripts/upload_icons.py
--- Regenerate: python ~/.claude/skills/roblox-ui/scripts/gen_icon_bank.py
+-- Regenerate: python ~/.agents/skills/roblox-ui/scripts/gen_icon_bank.py
 
 local UiIcons: {{ [string]: string }} = {{
 {rows}

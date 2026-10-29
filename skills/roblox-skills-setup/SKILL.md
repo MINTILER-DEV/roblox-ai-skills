@@ -1,6 +1,6 @@
 ---
 name: roblox-skills-setup
-description: Set up the free Roblox game-creation skills on THIS machine - check which tools are installed (Python, Rojo, Wally, Lune, Selene, StyLua, Blender, the Roblox Studio MCP), walk the user through anything missing, then write each skill's personal LOCAL.md (folders, tool paths, rig file, VFX library location, env var names for keys) by asking the user and auto-detecting what it can, and finish with a smoke test. Use this the first time after installing the skills, whenever a skill says "LOCAL.md not found", when the user moves folders or installs a new tool, or when they ask "how do I set these skills up", "what do I need installed", or "why can't the skill find Blender/Rojo/my library".
+description: Configure this Roblox skill pack on the current machine: detect tools and Studio MCP, resolve paths, write personal LOCAL.md settings, and smoke-test selected pipelines. Use after installation or when paths or tools change.
 ---
 
 # Set up the Roblox skills on this machine
@@ -29,11 +29,10 @@ writes those files with the user, so nothing has to be edited by hand.
 ## Step 1: check the machine
 
 ```bash
-python ~/.claude/skills/roblox-skills-setup/scripts/check_setup.py
+python ~/.agents/skills/roblox-skills-setup/scripts/check_setup.py
 ```
 
-Show the user the table. If the Studio MCP line says it is not in Claude
-Code's config files, that is not an error by itself: it is often registered
+Show the user the table. If the Studio MCP line says it is not in Codex's config files, that is not an error by itself: it is often registered
 another way. The live check in Step 5 is what counts. Then ask which parts they want to use. A sensible
 order for someone new:
 
@@ -45,8 +44,7 @@ order for someone new:
    project's README). The scaffolder also writes these into the game's own
    toolchain file.
 2. **Roblox Studio MCP.** The official one that ships with Roblox Studio. In
-   Studio, enable it from the Assistant / MCP settings, then add it to Claude
-   Code as the setup screen describes. Confirm with `claude mcp list`. Every
+   Studio, enable it from the Assistant / MCP settings, then add it to Codex as the setup screen describes. Confirm with `codex mcp list`. Every
    skill that touches Studio uses this server; use one Studio connection at a
    time.
 3. **UI, maps, VFX, SFX**: Python only, plus Studio.
@@ -63,7 +61,7 @@ order for someone new:
 Tell them how, for their OS, and wait until they say it is done:
 
 - Windows (PowerShell): `setx ROBLOX_API_KEY "paste-here"` then restart the
-  terminal and Claude Code.
+  terminal and Codex.
 - macOS / Linux: add `export ROBLOX_API_KEY="paste-here"` to `~/.zshrc` or
   `~/.bashrc`, then open a new terminal.
 
@@ -98,7 +96,7 @@ library from VFX packs you have the right to use.
    they are in YOUR inventory. This step is manual on purpose: Studio refuses
    to load an asset your account does not own, even a free one.
 2. Open a test place, insert the packs from your Toolbox inventory.
-3. Ask Claude to "harvest the VFX in this place" with `roblox-vfx`. It reads
+3. Ask Codex to "harvest the VFX in this place" with `roblox-vfx`. It reads
    every emitter's properties out of Studio into JSON recipes in your library
    folder, then classifies them so you can search ("ice ring", "fire burst").
 4. Check each pack's own terms before using its effects in a published game.
@@ -118,7 +116,7 @@ Run what the user set up, and report pass/fail honestly:
 - Studio: with Studio open, ask for `get_studio_state` through the MCP.
 - Blender: `blender --version` from the path in `LOCAL.md`.
 
-Then tell the user the front door: `/create-roblox-game` with the kind of game
+Then tell the user the front door: `$create-roblox-game` with the kind of game
 they want to make, or any single skill by name.
 
 ## Re-running

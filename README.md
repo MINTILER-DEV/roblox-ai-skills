@@ -1,6 +1,6 @@
-# SyphoDev Roblox Skills (free)
+# SyphoDev Roblox Skills for Codex (free)
 
-A set of Claude Code skills and agents for making Roblox games with AI: code,
+A set of Codex skills and agents for making Roblox games with AI: code,
 UI, maps, 3D models, textures, VFX, SFX, animation, and a front door that
 takes one game idea through research, design, build and playtest.
 
@@ -22,32 +22,74 @@ Free, as promised at 1,000 subscribers. Thank you for watching.
 | `roblox-animation` | Authors R15/R6 animations headlessly in Blender from a pose spec |
 | `roblox-skills-setup` | Sets everything up on YOUR machine. Run this first |
 
-Plus 7 agents (`agents/`) the orchestrator hands work to.
+Plus 7 native Codex custom agents (`skills/roblox-build-orchestrator/agents/*.toml`).
 
 ## Install
 
-1. Install [Claude Code](https://claude.com/claude-code) and Roblox Studio.
-2. Unzip this folder anywhere.
-3. Windows: right-click `install.ps1` > Run with PowerShell.
-   macOS / Linux: `bash install.sh`
-   (Or copy `skills/*` into `~/.claude/skills/` and `agents/*` into
-   `~/.claude/agents/` yourself.)
-4. Restart Claude Code and type `/roblox-skills-setup`.
+1. Install [Codex](https://developers.openai.com/codex/) and Roblox Studio.
+2. Clone or unzip this folder anywhere. Install Python 3.11+ first.
+3. Windows: run `powershell -ExecutionPolicy Bypass -File .\install.ps1`.
+   macOS / Linux: run `bash install.sh`.
+4. In Codex, type `$roblox-skills-setup`. Restart Codex if it does not appear.
+
+The installers copy all 11 skills to `~/.agents/skills/` and the seven TOML
+agents to `$CODEX_HOME/agents/` (default `~/.codex/agents/`). Existing versions
+are backed up alongside the destination, and each skill's `LOCAL.md` is preserved.
+Your Codex configuration and MCP registrations are left untouched.
+
+For a repository-only installation, use:
+
+```powershell
+.\install.ps1 -SkillsDir "C:\path\to\game\.agents\skills" -AgentsDir "C:\path\to\game\.codex\agents"
+```
+
+```bash
+bash install.sh --skills-dir /path/to/game/.agents/skills --agents-dir /path/to/game/.codex/agents
+```
+
+For manual installation, copy `skills/*` to the skills directory and
+`skills/roblox-build-orchestrator/agents/*.toml` to the agents directory.
+[Codex skill discovery](https://developers.openai.com/codex/skills/) and
+[custom agent configuration](https://developers.openai.com/codex/multi-agent/)
+describe these formats. Script examples use the default user skills directory;
+for a custom location, substitute the path from Codex's skill catalog. Helpers
+resolve sibling skills from their own installation; `ROBLOX_SKILLS_DIR` can
+explicitly select an alternate pack root for setup and preflight.
 
 The setup skill checks what you have installed, tells you what each missing
 tool is for, and writes a `LOCAL.md` inside each skill with YOUR folders and
 tool paths. You never have to edit a skill by hand. Run it again any time you
 move things or install something new.
 
-Then start a game: `/create-roblox-game make me a tycoon game`, or call any
+Then start a game: `$create-roblox-game make me a tycoon game`, or call any
 single skill by name ("use roblox-ui to make a shop screen").
+
+## Codex workflow
+
+All original scripts, templates, references and Roblox asset pipelines are retained.
+The Claude-specific agent metadata has been replaced by Codex TOML. Workers inherit
+the parent model; no Anthropic model names or fixed Codex model are required.
+The orchestrator uses native or generic subagents where available and falls back
+to sequential stages when delegation is unavailable. It keeps one Studio writer.
+Codex agents inherit MCP access: the file-only worker rule is an instruction,
+not a tool sandbox. Studio-dependent fallbacks return to the manager.
+
+Connect Roblox Studio through Codex's MCP settings or a Studio connector. For a
+local server, use `codex mcp add <name> -- <server-command> [args...]` with the
+command shown by Studio, then `codex mcp list`. The setup checker reads Codex
+`config.toml` server names without showing credentials, but only a live Studio
+call proves connectivity. No MCP server is bundled or automatically registered.
+See [Codex MCP configuration](https://developers.openai.com/codex/mcp/).
+
+Builds retain six-section handoffs and the original quality gates. This port does
+not imply the external generation services or your Studio installation were tested.
 
 ## What you need
 
 Not everything is needed for everything. The setup skill only asks about the
 parts you want.
 
-- **Always:** Claude Code, Roblox Studio with its official MCP enabled, Python 3.11+.
+- **Always:** Codex, Roblox Studio with its official MCP enabled, Python 3.11+.
 - **Code:** Rojo, Wally, Lune, Selene, StyLua (all free).
 - **3D models and animation:** Blender 4.x, and a free Hugging Face account for
   the mesh-generation step. **Do not use Kaggle**: see below.

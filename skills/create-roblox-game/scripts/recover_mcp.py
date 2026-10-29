@@ -8,7 +8,7 @@ THE ROOT CAUSE, which the older "kill all, respawn one" note never explained:
 
 The third-party `robloxstudio-mcp` is TWO halves that must agree on a port.
 
-    half 1   a node server, spawned by the MCP client (Claude Code)
+    half 1   a node server, spawned by the MCP client (Codex)
     half 2   the Studio plugin, which POLLS one port listed in its own panel
 
 Each server instance tries to bind **3002** plus one high port (48741-ish).

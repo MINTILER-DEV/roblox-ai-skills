@@ -8,7 +8,7 @@ Never write a key or token here; record only the NAME of the environment variabl
 - Games folder (where every game you make lives; section mode records its games
   here in `.section-games.json`). Scripts read the `ROBLOX_GAMES_HOME`
   environment variable and default to `~/Projects/Roblox-Games`:
-- Skills folder, only if you did not install into `~/.claude/skills`
+- Skills folder, only if you did not install into `~/.agents/skills`
   (scripts read `ROBLOX_SKILLS_DIR`):
 
 ## Tools (preflight.py checks these live)

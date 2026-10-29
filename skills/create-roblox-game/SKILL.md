@@ -1,6 +1,6 @@
 ---
 name: create-roblox-game
-description: Take a Roblox game from a genre to something built, assembled, playable and published, ONE SECTION PER SESSION - research and plan, code, art, animation and sound, playtest, publish - with a HANDOFF.md between sessions so the chat can be cleared after each approved section. Drives the whole toolchain - market research, a design contract, the code project, map, meshes, textures, UI, animation, VFX and sound, then assembly in Studio, playtest and publish. This is the FRONT DOOR: it owns research, design and assembly itself and delegates each asset stage to the skill that already proves that stage. Use whenever the user wants a Roblox game made, built, started or prototyped, says "make me a game" or names a genre to build (incremental, battlegrounds, ...), asks to "complete the research and plan stage" or any other stage, says "continue with the development of the <genre> game", approves a finished stage ("approved", "looks good"), or asks what is still missing before a game can be built.
+description: Build a Roblox game through research, design, code, assets, Studio assembly, playtest, and publishing, with durable section handoffs. Use for whole-game creation or continuing an existing build stage.
 ---
 
 # Make a Roblox game, end to end
@@ -28,7 +28,7 @@ map the prompt to a command and run it:
 | "continue with the development of the incremental game" | `section.py resume --game "continue with the development of the incremental game"` |
 | "approved" / "looks good" (after a section closed) | `section.py approve N --dir <game>`, then say it is safe to clear the chat |
 
-`S=~/.claude/skills/create-roblox-game/scripts/section.py`. `resume` finds the
+`S=~/.agents/skills/create-roblox-game/scripts/section.py`. `resume` finds the
 game from the words alone (genre, title, folder name), reads out `HANDOFF.md`,
 and prints the next section's scope, exit gate and rules. **Read `HANDOFF.md` in
 full before any work.** Do one section, pass `section.py close N`, stop, and ask
@@ -88,8 +88,7 @@ invisible to both of the workers that produced them.
 
 ## SECTION MODE IN DETAIL
 
-**The build is not a one-shot.** A 5-hour Claude Code usage limit cannot carry
-the whole pipeline, so it is prompted in six sections: you approve each one, then
+**The build is not a one-shot.** Long builds use durable handoffs to keep context manageable. The default is six sections: you approve each one, then
 **clear the session** before the next. You may say "stage"; the script says
 "section"; they are the same thing.
 
@@ -108,7 +107,7 @@ the full map rides with the other visual assets; VFX rides with motion and sound
 **Everything is in one script, so none of it depends on this paragraph being read:**
 
 ```bash
-S=~/.claude/skills/create-roblox-game/scripts/section.py
+S=~/.agents/skills/create-roblox-game/scripts/section.py
 python $S brief "research and plan"    # a number or the stage's words: scope, exit gate, rules
 python $S resume --game "<prompt words>"   # FIRST command of every later session
 python $S resume --game "<words>" --expect N   # refuses if N is not the next section
@@ -139,10 +138,10 @@ reasons.
   you do not stop, summarise or check in. The one new stopping point is
   `section.py close N` passing. Then you stop, and you do not start the next
   section even with budget left.
-- **Stay inside Claude Code and Roblox Studio.** These are the working rules of a
+- **Stay inside Codex and Roblox Studio.** These are the working rules of a
   section, so the run must never need them broken: no browser-driving tools and no
   web-GUI generators (WebSearch and WebFetch are fine), never ask the user to leave
-  Claude Code or Studio, and **never ask the user to enter anything in Studio by
+  Codex or Studio, and **never ask the user to enter anything in Studio by
   hand.** Screen access is for Studio only. The free asks are Play/Stop,
   Publish, approving a tool call, restarting a stuck MCP, and anything purely
   mechanical nothing of yours can reach.
@@ -284,7 +283,7 @@ game's own DataModels instead with `scripts/studio_mcp.py luau --dm Server` (or
 Run the check rather than trusting this table, because the table ages:
 
 ```bash
-python ~/.claude/skills/create-roblox-game/scripts/preflight.py
+python ~/.agents/skills/create-roblox-game/scripts/preflight.py
 ```
 
 ---
@@ -292,7 +291,7 @@ python ~/.claude/skills/create-roblox-game/scripts/preflight.py
 ## The contract is the whole design
 
 ```bash
-python ~/.claude/skills/create-roblox-game/scripts/new_game.py "My Game" --dir <your games folder>/MyGame
+python ~/.agents/skills/create-roblox-game/scripts/new_game.py "My Game" --dir <your games folder>/MyGame
 ```
 
 That lays down the `roblox-code` scaffold (by calling that skill's own
@@ -308,7 +307,7 @@ disagree with what ships - lifted up to the whole build.
 `game.json` ships full of `TODO` markers on purpose:
 
 ```bash
-python ~/.claude/skills/create-roblox-game/scripts/validate.py
+python ~/.agents/skills/create-roblox-game/scripts/validate.py
 ```
 
 fails while any survive. Every asset skill in this toolchain does something
@@ -1370,59 +1369,28 @@ Stages 4-9 run as parallel `roblox-asset-*` workers. Stages 0-2b and 10-12 stay
 on one thread. Wrap the run in the orchestrator's ledger either way:
 
 ```bash
-python ~/.claude/skills/roblox-build-orchestrator/scripts/run_log.py init --run my-game --mode fanout
+python ~/.agents/skills/roblox-build-orchestrator/scripts/run_log.py init --run my-game --mode fanout
 ```
 
-| Stage | Worker | Model |
-|---|---|---|
-| 4 map | `roblox-asset-map` | **opus** |
-| 5 meshes | `roblox-asset-mesh` | **opus** |
-| 6 ui | `roblox-asset-ui` | **opus** |
-| 7 animation | `roblox-asset-anim` | **opus** |
-| 8 vfx | `roblox-asset-vfx` | **opus** |
-| 9 sfx | `roblox-asset-sfx` | haiku |
+| Stage | Worker |
+|---|---|
+| 4 map | `roblox-asset-map` |
+| 5 meshes | `roblox-asset-mesh` |
+| 6 ui | `roblox-asset-ui` |
+| 7 animation | `roblox-asset-anim` |
+| 8 vfx | `roblox-asset-vfx` |
+| 9 sfx | `roblox-asset-sfx` |
 
-The tiering rule: **if a human will LOOK AT what the worker produces, the worker
-has to be able to judge it.**
+Use the native TOML definitions packaged in `roblox-build-orchestrator/agents`.
+They inherit the parent model and reasoning settings. Read that skill for custom
+agent installation, generic-worker fallback, and the solo mode when delegation
+is unavailable. Queue workers within the runtime's concurrency limit.
 
-The tempting rule is "a gate can check this stage, so it can run cheap" - and it
-is wrong, because gates catch CATEGORICAL failures, not quality. A gate
-that refuses a map built from boxes has nothing to say about whether the props
-you generated instead look good. Poor-looking trees and rocks were the
-verdict that ended a map stage which passed all 16 prover checks.
-
-And the fan-out economics point the same way. The saving comes from images
-staying INSIDE the worker - contact sheets, paint sheets, UI mockups, orientation
-sheets are expensive and never leave a context once read. A worker that cannot
-judge its own render has to ship it to the parent to be judged, which re-imports
-the exact cost the split was buying. So the model that looks at the sheet must be
-the model that can judge it.
-
-That covers map, meshes, UI, animation and VFX - everything a player sees. Sound
-stays on haiku because nothing in this pipeline can hear: sfx is chosen by
-listing name and measured duration, which is search-and-record work, and a human
-still has to listen before launch. Market research stays cheap because it gathers
-and cites, while the genre decision it feeds is never delegated at all.
-
-Most of the saving does NOT come from tiering anyway. Context isolation is the
-larger half and applies at every tier, so a nearly-all-Opus fan-out still captures
-most of the win. Raise a worker rather than ship a subtly wrong asset.
-
-**Why, measured 2026-09-02 on a solo run of the whole pipeline.** The reason is
-not wall-clock - that was worth about thirteen minutes waiting on a GPU. It is
-token cost, and it has two independent halves:
-
-1. **Context.** Every tool call re-sends the whole conversation, so in one long
-   window the *n*-th call carries everything before it and total cost grows
-   closer to quadratic than linear. By the end of that run, one-line Studio
-   probes were dragging the map prover, the UI stage and every render along with
-   them. A worker's eighty interior calls cost the parent one report instead.
-   Images are the sharpest case: contact sheets, paint sheets and screenshots are
-   expensive, never leave a context once read, and re-send forever. In a worker
-   they stay in the worker.
-2. **Model tier.** The per-agent models above already existed and went entirely
-   unused, because tiering only applies to work running inside a subagent. That
-   run did market research and sound sourcing on Opus. Both are haiku work.
+Workers producing visuals must inspect their verification renders. Automated
+gates catch structural failures but do not establish visual quality. Have a
+human listen to sound selections before launch when no audio inspection is
+available. Measure actual elapsed time and usage; this port does not prescribe
+model tiers or guarantee token savings.
 
 **What fan-out does NOT buy, and do not pretend otherwise.** Five of the six
 defects in that run's mesh stage lived at the **seam between stages**, not inside
@@ -1435,8 +1403,8 @@ Fan-out finds them in parallel; it does not find them.
 So two rules make the handoff safe, and neither is optional:
 
 - **Workers hand back artifacts and measurements, not adjectives.** A manifest
-  with measured numbers is a fact; "textures look right" is a claim. The cheaper
-  model does the work, this thread checks the numbers - that is the whole deal.
+  with measured numbers is a fact; "textures look right" is a claim. The worker
+  does the work and the integrating thread checks the numbers.
 - **Workers report the defects they hit, not just the output.** One that quietly
   fixes six things and reports "done" has destroyed what the integrator needed.
 

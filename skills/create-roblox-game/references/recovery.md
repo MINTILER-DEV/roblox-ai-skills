@@ -29,7 +29,7 @@ delete a selection, and there is no back button for most of it.
 
 `robloxstudio-mcp` is two halves that must agree on a port:
 
-- a **node server**, spawned by the MCP client (Claude Code)
+- a **node server**, spawned by the MCP client (Codex)
 - the **Studio plugin**, which polls one port listed in its own panel
 
 Every server instance binds **3002** plus one high port (48741-ish). With two
@@ -46,7 +46,7 @@ problem. Open its panel and use Connect.
 ### The routine
 
 ```bash
-python ~/.claude/skills/create-roblox-game/scripts/recover_mcp.py
+python ~/.agents/skills/create-roblox-game/scripts/recover_mcp.py
 ```
 
 1. **Diagnose.** The script lists every server and its ports and returns a
@@ -126,7 +126,7 @@ Measured 2026-08-30, all three of these the hard way:
   only reliable signal from outside.
 
 ```bash
-python ~/.claude/skills/create-roblox-game/scripts/place_state.py
+python ~/.agents/skills/create-roblox-game/scripts/place_state.py
 ```
 
 Returns `SAVED <path>` or `UNSAVED`, exits non-zero on unsaved, and warns if more

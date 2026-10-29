@@ -94,11 +94,11 @@ of movement (scoring, elimination, rewards) must stay on the server.
 ## Start a project
 
 ```bash
-python ~/.claude/skills/roblox-code/scripts/new_project.py "Coin Dash" \
+python ~/.agents/skills/roblox-code/scripts/new_project.py "Coin Dash" \
     --dir ~/Projects/CoinDash
 cd ~/Projects/CoinDash
 aftman install && wally install
-python ~/.claude/skills/roblox-code/scripts/check.py
+python ~/.agents/skills/roblox-code/scripts/check.py
 ```
 
 That last command must print **all gates green** before any game code is written.
@@ -117,9 +117,9 @@ headless runner, and a build stamp in both boot scripts.
 ## Check it
 
 ```bash
-python ~/.claude/skills/roblox-code/scripts/check.py            # all gates
-python ~/.claude/skills/roblox-code/scripts/check.py --fix      # let stylua rewrite
-python ~/.claude/skills/roblox-code/scripts/check.py --skip-lint  # build + tests only
+python ~/.agents/skills/roblox-code/scripts/check.py            # all gates
+python ~/.agents/skills/roblox-code/scripts/check.py --fix      # let stylua rewrite
+python ~/.agents/skills/roblox-code/scripts/check.py --skip-lint  # build + tests only
 ```
 
 `rojo build` is the single highest-value command in Roblox development and it is

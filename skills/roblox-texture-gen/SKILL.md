@@ -36,8 +36,7 @@ materials, decals, many parts at once, or a texture you want as a reusable file.
 
 The tools come from the official Roblox Studio MCP (`list_roblox_studios`,
 `get_studio_state`, `search_game_tree`, `inspect_instance`, `execute_luau`,
-`upload_image`, `screen_capture`). If they are deferred, load them in one ToolSearch
-call. Call `list_roblox_studios` to get the `studio_id` every other call needs, then
+`upload_image`, `screen_capture`). If they are deferred, discover them through the current Codex tool catalog. Call `list_roblox_studios` to get the `studio_id` every other call needs, then
 `get_studio_state`. If either fails, **stop and tell the user plainly**: the Studio MCP
 isn't connected or Studio isn't open. Don't fabricate a result; this pipeline is dead
 without a live Studio session.

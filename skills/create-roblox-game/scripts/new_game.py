@@ -21,17 +21,18 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import subprocess
 import sys
 from pathlib import Path
 
 # The skills folder is the parent of this skill, wherever the user installed it;
-# fall back to the standard Claude Code location.
-_SKILLS = Path(__file__).resolve().parent.parent.parent
+# fall back to the standard Codex location.
+_SKILLS = Path(os.environ.get("ROBLOX_SKILLS_DIR") or Path(__file__).resolve().parents[2])
 CODE_SKILL = _SKILLS / "roblox-code" / "scripts" / "new_project.py"
 if not CODE_SKILL.exists():
-    CODE_SKILL = Path.home() / ".claude" / "skills" / "roblox-code" / "scripts" / "new_project.py"
+    CODE_SKILL = Path.home() / ".agents" / "skills" / "roblox-code" / "scripts" / "new_project.py"
 
 TODO = "TODO"
 
@@ -72,7 +73,7 @@ touches Studio.
 Every run is logged from the start, not reconstructed afterwards:
 
 ```
-python ~/.claude/skills/roblox-build-orchestrator/scripts/run_log.py init --run {slug} --mode fanout
+python ~/.agents/skills/roblox-build-orchestrator/scripts/run_log.py init --run {slug} --mode fanout
 ```
 """
 
@@ -202,7 +203,7 @@ def main() -> int:
     print("\nnext:")
     print(f"  cd {root} && aftman install && wally install")
     print("  # design stage: replace every TODO in design/*.json")
-    print("  python ~/.claude/skills/create-roblox-game/scripts/validate.py")
+    print("  python ~/.agents/skills/create-roblox-game/scripts/validate.py")
     return 0
 
 

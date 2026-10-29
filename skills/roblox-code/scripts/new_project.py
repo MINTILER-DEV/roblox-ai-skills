@@ -470,7 +470,7 @@ def main() -> int:
     print("\nnext, from that directory:")
     print("  aftman install")
     print("  wally install")
-    print("  python ~/.claude/skills/roblox-code/scripts/check.py")
+    print("  python ~/.agents/skills/roblox-code/scripts/check.py")
     print("\nthe scaffold is green on all gates before you write a line of game code.")
     print("if it is not, the toolchain is broken and nothing after this is trustworthy.")
     return 0

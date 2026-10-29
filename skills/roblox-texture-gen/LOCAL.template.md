@@ -2,7 +2,7 @@
 
 Copy this file to `LOCAL.md` and fill it in. `LOCAL.md` is yours and is never shared.
 
-- Studio MCP server name: (which MCP server connects to Roblox Studio, the official Roblox Studio MCP; check with `claude mcp list`)
+- Studio MCP server name: (which MCP server connects to Roblox Studio, the official Roblox Studio MCP; check with `codex mcp list`)
   Value:
 - Texture scratch folder: (where generated PNGs are saved before upload; any folder outside your game project)
   Value:

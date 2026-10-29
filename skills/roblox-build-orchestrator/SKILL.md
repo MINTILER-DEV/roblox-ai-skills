@@ -1,6 +1,6 @@
 ---
 name: roblox-build-orchestrator
-description: Runs a Roblox game build pipeline as a timed, logged run (market research, design, code, 3D/materials/UI/animation/VFX/SFX, assembly, playtest, publish), fans the asset block out to subagents while keeping every Studio write on one thread, enforces the write boundary, and keeps a timestamped ledger of stalls, fallbacks and interventions with a debts gate so a run cannot end with known defects. Use this whenever you are running or planning a full Roblox build, want the agent pipeline orchestrated, parallelised, or handed to a manager agent, mention an intervention counter, the 30-minute stall rule, or Tier 2 to Tier 1 fallbacks, or ask whether subagents would help a Roblox build. Also use it to rehearse the roster on a practice run before a build you care about, because an untested orchestration layer is a second variable.
+description: Coordinate a Roblox game build with independent asset workers, one Studio writer, timed stage logs, fallbacks, and a defects ledger. Use for full builds or evaluating parallel asset production.
 ---
 
 # Roblox Build Orchestrator
@@ -21,16 +21,20 @@ stage skills (`roblox-3d-model`, `roblox-texture-gen`, `roblox-ui`,
 If you invoke this skill, walk the user through the below and run the commands
 for them. Nobody should have to remember any of it.
 
-**Setup.** The worker definitions live in this skill's `agents/` folder and must
-be installed where Claude Code reads agents. The pack's installer normally does
-this. To confirm, or after a machine change:
+**Setup.** The seven native Codex worker definitions ship in this skill's
+`agents/*.toml`. Run the pack's `install.ps1` or `install.sh` to copy them to
+`$CODEX_HOME/agents` (default `~/.codex/agents`). Restart Codex if the custom
+agents do not appear. Each inherits the parent model and reasoning settings.
 
-```bash
-mkdir -p ~/.claude/agents && cp ~/.claude/skills/roblox-build-orchestrator/agents/*.md ~/.claude/agents/
-```
+Use the named custom agent when supported. If the current runtime only exposes
+generic worker spawning, read the matching TOML's `developer_instructions` and
+include them in a generic worker's task. Pass the absolute path to the stage
+skill's `SKILL.md`, the spec, output paths, and deadline explicitly. If delegation
+is unavailable, run Mode A with the same stage gates; do not invent a Task tool.
 
-(`roblox-asset-map` is the seventh worker; it ships alongside the others in the
-pack's `agents/` folder, and the same copy command installs it.)
+Codex does not implement the old Markdown agent `tools`, `disallowedTools`,
+`skills`, or `maxTurns` fields. These TOML files define workflow instructions;
+they do not create per-worker MCP sandboxes or enforce wall-clock timeouts.
 
 **Every run, three steps:**
 
@@ -45,21 +49,13 @@ pack's `agents/` folder, and the same copy command installs it.)
 
 The asset block (meshes, materials, UI, animation, VFX, SFX, and the map) is
 mutually independent, all downstream of one design spec, and generation-heavy.
-That is the shape fan-out is for, and `create-roblox-game` runs it that way by
-default because of what was measured: the saving is not wall-clock, it is token
-cost, in two independent halves. First, every tool call re-sends the whole
-conversation, so a long single window costs closer to quadratic than linear, and
-images (contact sheets, screenshots) re-send forever; in a worker they stay in the
-worker. Second, per-agent model tiering only applies inside a subagent.
+Fan out when delegation is available and the stages have independent inputs and
+outputs. Limit concurrency to the runtime's available slots and queue remaining
+workers. Measure elapsed time and usage where the runtime exposes them; do not
+assume model-specific pricing, context accounting, or a guaranteed cost saving.
 
-The spine is different. Design needs research, code needs design, assembly needs
-code and assets, playtest needs assembly. The best controlled evidence on
-multi-agent systems (Nature Machine Intelligence 2026, 260 configurations with
-compute held constant) found that single-agent baseline performance is the
-strongest predictor of whether coordination helps, and that past a capability
-threshold extra agents make things *worse*. Anthropic's own multi-agent win is
-explained almost entirely by token spend, not by coordination. So the dependent
-stages stay on one thread.
+The spine is dependent: design needs research, code needs design, assembly needs
+code and assets, playtest needs assembly. Keep those stages on the main thread.
 
 Two consequences:
 
@@ -80,7 +76,7 @@ something outside the moment to enforce it.
 Start every run, including a practice run, with:
 
 ```bash
-python ~/.claude/skills/roblox-build-orchestrator/scripts/run_log.py init --run <name> --mode fanout
+python ~/.agents/skills/roblox-build-orchestrator/scripts/run_log.py init --run <name> --mode fanout
 ```
 
 Then bracket each stage and log every event as it happens, not afterwards:
@@ -167,9 +163,7 @@ one synthesis at the end), and it is the safest place to rehearse the pattern
 because nothing it does touches Studio.
 
 **Do not fan out the spine.** Design needs research, code needs design, assembly
-needs code and assets, playtest needs assembly. Anthropic names dependency-heavy
-work as the poor-fit case explicitly, and adds that coding tasks have fewer
-genuinely parallel parts than research does.
+needs code and assets, and playtest needs assembly.
 
 ### The write boundary is the hard constraint
 
@@ -182,38 +176,34 @@ duplicates that killed every Knit controller. Exactly one MCP server is the rule
 So:
 
 - **Workers write files to disk and nothing else.** Meshes, `.model.json`,
-  KeyframeSequence specs, audio files, texture maps. No Studio tools at all.
+  KeyframeSequence specs, audio files, texture maps. Do not use Studio tools or direct Studio bridges.
 - **One thread does every `execute_luau`, `insert_asset`, assembly, and publish.**
 
 This costs nothing to adopt because the existing skills already emit files rather
-than mutating Studio directly. It is enforced by the tool allowlist in each
-worker definition, not by asking politely, because a prompt does not reliably hold
-a boundary and an allowlist does.
+than mutating Studio directly. Codex workers inherit the parent MCP servers. The no-Studio rule is an
+instruction boundary, not an enforced allowlist. For hard isolation, run file-only
+stages in a separate environment with no Studio bridge or credentials, or run solo.
+A fallback needing Studio is returned to the manager for serial execution.
 
 ### The roster
 
-Installed at `~/.claude/agents/` (see *Start here*). Works identically in the
-Claude Code terminal and the desktop app, since both read the same directory.
+Installed at `$CODEX_HOME/agents` (default `~/.codex/agents/`). The packaged
+source is `agents/*.toml` in this skill. Models and reasoning inherit from the
+parent; choose overrides only when requested or configured for the project.
 
-| Worker | Model | Writes | Tools |
-|---|---|---|---|
-| `roblox-asset-map` | opus | map spec outputs, proven layout, build artifacts | file ops, Bash, no Studio |
-| `roblox-asset-mesh` | opus | mesh files + manifest | file ops, Bash, no Studio |
-| `roblox-asset-ui` | opus | `.model.json` + Luau + PNG mockup | file ops, Bash, no Studio |
-| `roblox-asset-anim` | opus | KeyframeSequence spec + verification renders | file ops, Bash, no Studio |
-| `roblox-asset-vfx` | opus | VFX kit + manifest, from your harvested library | file ops, Bash, no Studio |
-| `roblox-asset-sfx` | haiku | audio files + licence note | file ops, Bash, WebFetch, no Studio |
-| `roblox-market-scout` | haiku | one findings file per genre | read-only + web, no writes to the build |
+| Worker | Output |
+|---|---|
+| `roblox-asset-map` | map spec outputs, proven layout, build artifacts |
+| `roblox-asset-mesh` | mesh files and manifest |
+| `roblox-asset-ui` | `.model.json`, Luau builder, PNG mockup |
+| `roblox-asset-anim` | KeyframeSequence spec and verification renders |
+| `roblox-asset-vfx` | VFX kit and manifest from a harvested library |
+| `roblox-asset-sfx` | audio files and licence notes |
+| `roblox-market-scout` | findings file with opened sources |
 
-The tiering rule: **if a human will LOOK AT what the worker produces, the worker
-has to be able to judge it.** Gates catch categorical failures, not quality, and
-the saving comes from images staying inside the worker, so a worker that cannot
-judge its own render has to ship it to the parent, which re-imports the cost the
-split was buying. Sound stays on haiku because nothing in this pipeline can hear;
-market research stays cheap because it gathers and cites.
-
-Each is read-only with respect to Studio by construction. `maxTurns` on each one
-enforces the 30-minute stall rule mechanically rather than by watching a timer.
+Workers must not interact with Studio or upload assets. Pass explicit deadlines,
+monitor their progress, and stop an overrun through the runtime's agent controls.
+The ledger reports stalls; the agent TOML does not enforce a timer.
 
 ## Briefing a worker
 
@@ -291,7 +281,7 @@ roster once more before a run that matters.
 
 - `scripts/run_log.py` - the ledger, counter, stall check, timing report, fan-out
   verdict and debts gate. Run `--help` for the full CLI.
-- `agents/*.md` - the worker definitions, tool-restricted by construction.
+- `agents/*.toml` - native Codex worker definitions with file-only instructions.
 - `references/stage-briefs.md` - worked briefs and manifest shapes per stage.
 - `references/write-boundary.md` - why the single-writer rule exists, with the
   failures that motivated it.

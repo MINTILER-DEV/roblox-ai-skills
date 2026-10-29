@@ -57,7 +57,7 @@ Bounds measured by the exporter, not typed.
 TOOLS
 Use the roblox-3d-model skill. Attempt Tier 2 (own chain: image gen, verified 2D
 mockup, image-to-3D, headless Blender decimate) first. Tier 1 fallback is the
-Studio MCP generate_mesh (Cube 3D).
+a request to the manager for serial Studio MCP generate_mesh (Cube 3D).
 
 BOUNDARIES
 Meshes only. No textures beyond what the paint step in the skill produces, no

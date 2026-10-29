@@ -31,7 +31,7 @@ KILN="$KILN_HOME"
 cd <asset dir>
 npx --prefix $KILN kiln render gun.kiln.js --out gun.glb --views gun.png --backdrop light --json
 # LOOK at gun.png. Revise the program. Repeat. Then:
-node ~/.claude/skills/roblox-3d-model/scripts/kiln_to_roblox.mjs gun.glb gun_roblox.glb
+node ~/.agents/skills/roblox-3d-model/scripts/kiln_to_roblox.mjs gun.glb gun_roblox.glb
 # Studio: Import 3D on gun_roblox.glb
 ```
 
@@ -64,11 +64,9 @@ then `--id <name>` for its exact contract. Examples to read for style:
 
 ## Kiln's own agent workspace (optional)
 
-`npx --prefix $KILN kiln-init <dir> --harness claude` creates a workspace with
-Kiln's MCP server and its own authoring skills (`kiln-author-asset`,
-`kiln-refine-asset`, `kiln-qa-asset`). That route has immutable revisions and a
-local viewer, but it has **not** been set up in this skill. The CLI loop above is enough
-for props and keeps the pipeline in files.
+Use the file-based CLI loop above in Codex. If you want Kiln's optional agent
+workspace, inspect the installed `kiln-init --help` for supported harnesses first;
+this pack does not configure that integration or assume a Codex harness exists.
 
 ## Maturity, for judging risk
 

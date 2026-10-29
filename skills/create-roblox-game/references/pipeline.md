@@ -2,14 +2,14 @@
 
 Each stage: what it reads, what it runs, what proves it is done, and the trap
 that stage is known for. Commands are relative to each skill's own directory
-(`~/.claude/skills/<name>`) unless a path is given.
+(`~/.agents/skills/<name>`) unless a path is given.
 
 ---
 
 ## 0. Preflight
 
 ```bash
-python ~/.claude/skills/create-roblox-game/scripts/preflight.py
+python ~/.agents/skills/create-roblox-game/scripts/preflight.py
 ```
 
 **Done when** every REQUIRED row is green. Degraded rows close one stage each and
@@ -41,7 +41,7 @@ already died is. Keep the market read in your own project notes, not only in the
 This skill owns it. Fill `design/game.json` and each stage spec.
 
 ```bash
-python ~/.claude/skills/create-roblox-game/scripts/validate.py
+python ~/.agents/skills/create-roblox-game/scripts/validate.py
 ```
 
 **Done when** validate passes: no TODO in any live spec, every referenced file
@@ -59,7 +59,7 @@ Reads `systems` and `config` from the contract.
 
 ```bash
 cd <game> && aftman install && wally install
-python ~/.claude/skills/roblox-code/scripts/check.py
+python ~/.agents/skills/roblox-code/scripts/check.py
 ```
 
 **Done when** all four gates are green **on the scaffold, before game logic**,
@@ -218,9 +218,9 @@ all output if the script yields.
 ## 10b. Wiring - the handoff gate
 
 ```bash
-python ~/.claude/skills/create-roblox-game/scripts/verify_wired.py --dir <game>
+python ~/.agents/skills/create-roblox-game/scripts/verify_wired.py --dir <game>
 # run work/wired_probe.lua in EDIT MODE via execute_luau, save the return verbatim
-python ~/.claude/skills/create-roblox-game/scripts/verify_wired.py --dir <game> --report work/wired_report.txt
+python ~/.agents/skills/create-roblox-game/scripts/verify_wired.py --dir <game> --report work/wired_report.txt
 ```
 
 **Done when** both passes are green. Never hand over on the static pass alone.
@@ -284,7 +284,7 @@ playtest, because the test stage was not a faithful stand-in for a live player.
 ## 12. Publish
 
 ```bash
-python ~/.claude/skills/roblox-3d-model/scripts/upload_asset.py --file <asset> --name <name>
+python ~/.agents/skills/roblox-3d-model/scripts/upload_asset.py --file <asset> --name <name>
 ```
 
 **You mint the universe and place by hand, once, before the run** - the

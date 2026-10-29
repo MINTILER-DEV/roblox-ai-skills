@@ -35,7 +35,7 @@ from pathlib import Path
 BANNER = """--!strict
 -- GENERATED FILE - DO NOT EDIT BY HAND.
 -- Source: design/game.json `config`
--- Regenerate: python ~/.claude/skills/create-roblox-game/scripts/gen_config.py --dir <game>
+-- Regenerate: python ~/.agents/skills/create-roblox-game/scripts/gen_config.py --dir <game>
 -- Every tunable in the game lives here, so a balance pass is a data edit to the
 -- contract and never a code edit. `gen_config.py --check` fails if this file and
 -- the contract have drifted apart.

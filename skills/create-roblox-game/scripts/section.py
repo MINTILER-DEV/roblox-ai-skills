@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Run the pipeline one SECTION at a time, with a gate and a handoff between.
 
-WHY THIS EXISTS. A one-shot, whole-game run does not fit in one Claude Code
+WHY THIS EXISTS. A one-shot, whole-game run does not fit in one Codex
 usage window (a plan with a 5-hour limit cannot carry the whole pipeline). So
 the build is prompted in six sections: you approve each one, then CLEAR THE
 SESSION before the next. That breaks two assumptions the rest of this skill
@@ -165,11 +165,11 @@ RULES = [
     "ONE SECTION PER SESSION. Finish this section's whole scope, then stop. Inside a section "
     "the skill's 'the run does not stop' rule applies in full; `section.py close N` passing "
     "is the only place you stop. Never start the next section's work, even with budget left.",
-    "STAY INSIDE CLAUDE CODE AND ROBLOX STUDIO. Work through the skills, MCPs and CLIs. No "
+    "STAY INSIDE CODEX AND ROBLOX STUDIO. Work through the skills, MCPs and CLIs. No "
     "browser-driving tools (browser pane, Chrome), no web-GUI generators. WebSearch and "
-    "WebFetch inside Claude Code are fine. Screen access is for Roblox Studio only.",
+    "web search and fetch tools inside Codex are fine. Screen access is for Roblox Studio only.",
     "NOTHING IN STUDIO BY THE USER'S HAND. Never ask the user to place, type, edit or configure "
-    "anything in Studio, and never ask them to leave Claude Code or Studio. You may ask for: "
+    "anything in Studio, and never ask them to leave Codex or Studio. You may ask for: "
     "pressing Play or Stop, clicking Publish, approving a tool call, restarting a stuck MCP, "
     "or something purely mechanical no API or screen action of yours can reach.",
     "LOG INTERVENTIONS AS THEY HAPPEN (run_log.py event --kind intervention): the user writes or "
@@ -419,7 +419,7 @@ def cmd_handoff(a) -> int:
         "A cleared session starts from this file alone. Read it in full, then run:",
         "",
         "```bash",
-        f"python ~/.claude/skills/create-roblox-game/scripts/section.py resume --dir \"{root}\"",
+        f"python ~/.agents/skills/create-roblox-game/scripts/section.py resume --dir \"{root}\"",
         "```",
         "",
         "## Where things are",
@@ -442,7 +442,7 @@ def cmd_handoff(a) -> int:
         "Initialised once in section 1. Never run `init` again.",
         "",
         "```bash",
-        f"python ~/.claude/skills/roblox-build-orchestrator/scripts/run_log.py counter --dir \"{ledger.parent}\" --run \"{ledger.name}\"",
+        f"python ~/.agents/skills/roblox-build-orchestrator/scripts/run_log.py counter --dir \"{ledger.parent}\" --run \"{ledger.name}\"",
         "```",
         "",
         "## Place",
@@ -479,7 +479,7 @@ def cmd_approve(a) -> int:
     save_state(root, st)
     print(f"SECTION {a.n} APPROVED. HANDOFF.md is final: {root / 'HANDOFF.md'}")
     title = json.loads((root / "design" / "game.json").read_text(encoding="utf-8")).get("title", "the game")
-    print(f"It is safe to clear the chat. Next session: /create-roblox-game continue with the development of {title}")
+    print(f"It is safe to clear the chat. Next session: $create-roblox-game continue with the development of {title}")
     return 0
 
 

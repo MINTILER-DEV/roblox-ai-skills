@@ -1,15 +1,12 @@
 #!/usr/bin/env python3
-"""Call Roblox Studio's built-in MCP server DIRECTLY over stdio, bypassing the
-Claude client's cached tool schema.
+"""Call Roblox Studio's built-in MCP server directly over stdio on Windows.
 
-DEFECT IT EXISTS FOR (2026-09-11, 2026-09-28 twice, including a FRESH session):
-the Claude client's `mcp__Roblox_Studio__execute_luau` schema has no
-`datamodel_type`, but StudioMCP.exe now REQUIRES it, so every call fails with
-"datamodel_type is required". Passing the field anyway is stripped by the client;
-ToolSearch returns the same stale schema; a cleared session did not fix it.
-The server itself advertises the field (enum Edit / Client / Server) - so talk to
-it directly. Bonus: `--dm Server` / `--dm Client` reach the RUNNING game during a
-playtest, which the old wisdom said was impossible.
+Prefer the connected Studio MCP tools. Use this helper only for a demonstrated
+client/schema mismatch, after checking the current tools and target Studio.
+It launches a separate local stdio client, so serialize all calls with the main
+Studio writer. Never run it from an asset worker. The original mismatch involved
+an older client dropping the required datamodel_type field; do not assume Codex
+has that defect.
 
 Usage:
   studio_mcp.py list                                   # tools + studios

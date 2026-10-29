@@ -28,10 +28,10 @@ import urllib.request
 from pathlib import Path
 
 # The skills folder: ROBLOX_SKILLS_DIR if set, else the folder this skill lives
-# in, else the standard Claude Code location.
+# in, else the standard Codex location.
 SKILLS = Path(os.environ.get("ROBLOX_SKILLS_DIR") or Path(__file__).resolve().parent.parent.parent)
 if not (SKILLS / "create-roblox-game").exists():
-    SKILLS = Path.home() / ".claude" / "skills"
+    SKILLS = Path.home() / ".agents" / "skills"
 
 # name, required, what it unblocks
 STAGE_SKILLS = [
